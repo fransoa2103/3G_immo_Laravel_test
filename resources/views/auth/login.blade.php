@@ -15,25 +15,21 @@
         @if(session('success'))
             <div class="alert alert-success mt-3">{{ session('success') }}</div>
         @endif
+        <!-- affiche un message d'erreur lorsque une saisie de connexion est erronnée -->
+        @if(session('error'))
+            <div class="alert alert-danger mt-3">{{ session('error') }}</div>
+        @endif
         
         <div class="card card-outline-secondary my-4">
             <div class="card-header">
-                Inscription
+                Connexion
             </div>
         </div>
         <!-- /.card -->
 
         <div class="card-body">
             <!-- Formulaire d'inscription -->
-            <form action = " {{ route('post.register')}} " method="POST">
-                {{-- @csrf --}}
-                <div class="mb-3">
-                    <label for="name" class="form-label">Nom</label>
-                    <input type="text" name="name" class="form-control" value="{{old('name')}}">
-                    @error('name')
-                        <div class="error text-danger">{{ $message }}</div>
-                    @enderror
-                </div>
+            <form action = " {{ route('post.login')}} " method="POST">
                 <div class="mb-3">
                     <label for="email" class="form-label">Email</label>
                     <input type="email" name="email" class="form-control" value="{{old('email')}}">
@@ -48,11 +44,12 @@
                         <div class="error text-danger">{{ $message }}</div>
                     @enderror
                 </div>
-                {{-- <div class="mb-3 form-check">
-                    <input type="checkbox" class="form-check-input" id="exampleCheck1">
-                    <label class="form-check-label" for="exampleCheck1">Check me out</label>
-                </div> --}}
-                <button type="submit" class="btn btn-primary">Inscription</button>
+                <div class="mb-3 form-check">
+                    <input type="checkbox" class="form-check-input" id="remmber" name="remember" value="1">
+                    <label class="form-check-label" for="rememeber">Se souvenir de moi</label>
+                </div>
+                <button type="submit" class="btn btn-primary">Connexion</button>
+                {{-- @csrf --}}
                 <input type="hidden" name="_token" value="{{ csrf_token() }}" />
             </form>
         </div>

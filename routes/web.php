@@ -17,9 +17,17 @@ use App\Http\Controllers\
 {
     ArticleController,
     UserController,
-    RegisterController
+    RegisterController,
+    LoginController,
+    LogoutController
 };
 
+// Appel la page du formulaire de connexion
+Route::get('logout', [LogoutController::class, 'logout'])->name('logout');
+// Appel la page du formulaire de connexion
+Route::get('login', [LoginController::class, 'index'])->name('login');
+// traitement de la page de connexion
+Route::post('login', [LoginController::class, 'login'])->name('post.login');
 // Appel la page du formulaire d'inscription
 Route::get('register', [RegisterController::class, 'index'])->name('register');
 // traitement du formulaire d'inscription
