@@ -13,6 +13,16 @@ class User extends Authenticatable
     use HasApiTokens, HasFactory, Notifiable;
 
     /**
+    *
+    * on créee une fonction "lien" qui retourne tous les articles d'un user
+    * grace à la class HasFactory
+    *
+    */
+    public function articles(){
+        return $this->hasMany(Article::class);
+    }
+
+    /**
      * The attributes that are mass assignable.
      *
      * @var array<int, string>
