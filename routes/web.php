@@ -1,6 +1,5 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
 
 /*
 |--------------------------------------------------------------------------
@@ -13,6 +12,44 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\
+{
+    ArticleController,
+    UserController,
+    RegisterController
+};
+
+// Appel la page du formulaire d'inscription
+Route::get('register', [RegisterController::class, 'index'])->name('register');
+// traitement du formulaire d'inscription
+Route::post('register', [RegisterController::class, 'register'])->name('post.register');
+
+/*
+|
+| Appel de function dans une class, ici on appelle:
+| get       => get (ou post)   
+| url       => cheminProfile (appelé helper url)
+| class     => UserController
+| fonction  => funcProfile        
+|
+| et on nomme cet appel de fonction ici ->name('user.profile')
+|
+*/
+Route::get('profile/{username}', [UserController::class, 'funcProfile'])->name('user.profile');
+
+/*
+|
+| Créer un controller restfull ArticleController, le relier à ses routes
+|
+*/
+route::resource('articles',ArticleController::class);
+
+/*
+|
+| Appelle la page LARAVEL
+|
+*/
 Route::get('/', function () {
     return view('welcome');
 });
@@ -66,29 +103,4 @@ route::get('test3', function()
 
 
 
-/*
-|--------------------------------------------------------------------------
-| CHAPITRE 6 CONTROLLER
-|--------------------------------------------------------------------------
-|
-| Appel de function dans une class, ici on appelle:
-| url      => cheminProfile (appelé helper url)
-| class    => UserController
-| fonction => funcProfile        
-| en option on peut nommer cet appel de fonction ->name('user.profile')
-|
-*/
-use App\Http\Controllers\
-{
-    ArticleController,
-    UserController
-};
 
-Route::get('chemin/{username}', [UserController::class, 'funcProfile'])->name('user.profile');
-
-/*
-|
-| Créer un controller restfull ArticleController, le relier à ses routes
-|
-*/
-route::resource('articles',ArticleController::class);

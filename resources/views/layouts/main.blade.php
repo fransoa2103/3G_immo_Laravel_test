@@ -3,9 +3,9 @@
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-        <meta name="description" content="">
+        <meta name="description" content="{{ $description ?? ''}}">
 
-        <title>Formation Laravel</title>
+        <title>{{ $title ?? '3Gimmo'}}</title>
         <!-- Get BOOTSTRAP v4.5.2 -->
         <link
             rel="stylesheet"
@@ -59,7 +59,7 @@
         <!-- Footer -->
         <footer class="py-5 bg-dark">
             <div class="container">
-            <p class="m-0 text-center text-white">Copyright &copy; Formation Laravel 2020</p>
+            <p class="m-0 text-center text-white">Copyright &copy; Formation Laravel 2022</p>
             </div>
             <!-- /.container -->
         </footer>
