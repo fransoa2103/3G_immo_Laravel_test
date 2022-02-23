@@ -16,6 +16,55 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('welcome');
 });
+/*
+|--------------------------------------------------------------------------
+| CHAPITRE 7 BLADE
+|--------------------------------------------------------------------------
+| Création d'un dossiers LAYOUTS + 1 fichier main.php
+| similaire à ob_start et ob_clean avec PHP
+| utilistaion des syntaxes 
+|       @extends ('nom du fichier')
+|       @section('content')
+|       @stop
+| puis insertion dans le fichier destinataire de la ligne de commande 
+|       @yierd('content')
+*/
+route::get('test', function()
+{
+    // return view('test')->withTitle('LARAVEL');
+    return view('test', ['title' => 'LARAVEL']);
+});
+route::get('test2', function()
+{
+    return view('test2', ['title' => 'PHP']);
+
+});
+
+/*
+| Création d'un dossiers LAYOUTS + 1 fichier main.php
+| similaire à ob_start et ob_clean avec PHP
+| utilistaion des syntaxes 
+|       @extends ('nom du fichier')
+|       @section('content')
+|       @stop
+| puis insertion dans le fichier destinataire de la ligne de commande 
+|       @yierd('content')
+*/
+// méthode 1
+// route::get('test3/{number}', function($number)
+// {
+//     return view('structure', $number);
+// });
+// méthode 2
+route::get('test3', function()
+{
+    // $fruits = ['orange','citron','banane','pomme','raisin'];
+    $fruits = [];
+    $data = ['number'=> 4, 'fruits' => $fruits];
+    return view('structure', $data);
+});
+
+
 
 /*
 |--------------------------------------------------------------------------
