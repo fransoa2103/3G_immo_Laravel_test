@@ -11,17 +11,7 @@ use Laravel\Sanctum\HasApiTokens;
 class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
-
-    /**
-    *
-    * on créee une fonction "lien" qui retourne tous les articles d'un user
-    * grace à la class HasFactory
-    *
-    */
-    public function articles(){
-        return $this->hasMany(Article::class);
-    }
-
+    
     /**
      * The attributes that are mass assignable.
      *
@@ -32,7 +22,7 @@ class User extends Authenticatable
         'email',
         'password',
     ];
-
+    
     /**
      * The attributes that should be hidden for serialization.
      *
@@ -42,7 +32,7 @@ class User extends Authenticatable
         'password',
         'remember_token',
     ];
-
+    
     /**
      * The attributes that should be cast.
      *
@@ -51,4 +41,14 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    /**
+    *
+    * on créee une fonction "lien" qui retourne tous les articles d'un user
+    * grace à la class HasFactory
+    *
+    */
+    public function articles(){
+        return $this->hasMany(Article::class);
+    }
 }
