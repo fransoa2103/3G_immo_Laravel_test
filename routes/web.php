@@ -18,7 +18,7 @@ Route::get('/', function () {
 });
 /*
 |--------------------------------------------------------------------------
-| CHAPITRE 7 BLADE
+| CHAPITRE 7 BLADE + ses structures
 |--------------------------------------------------------------------------
 | Création d'un dossiers LAYOUTS + 1 fichier main.php
 | similaire à ob_start et ob_clean avec PHP
