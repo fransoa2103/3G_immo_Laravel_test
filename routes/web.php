@@ -22,6 +22,9 @@ use App\Http\Controllers\
     LogoutController
 };
 
+route::get('articles',[ArticleController::class, 'index']);
+// Créer un controller restfull ArticleController, le relier à ses routes
+route::resource('articles',ArticleController::class);
 // Appel la page du formulaire de connexion
 Route::get('logout', [LogoutController::class, 'logout'])->name('logout');
 // Appel la page du formulaire de connexion
@@ -44,14 +47,8 @@ Route::post('register', [RegisterController::class, 'register'])->name('post.reg
 | et on nomme cet appel de fonction ici ->name('user.profile')
 |
 */
-Route::get('profile/{username}', [UserController::class, 'funcProfile'])->name('user.profile');
+Route::get('profile/{user}', [UserController::class, 'funcProfile'])->name('user.profile');
 
-/*
-|
-| Créer un controller restfull ArticleController, le relier à ses routes
-|
-*/
-route::resource('articles',ArticleController::class);
 
 /*
 |

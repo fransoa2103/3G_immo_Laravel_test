@@ -3,9 +3,13 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
+use App\Models\Article;
 
 class ArticleController extends Controller
 {
+    protected $perPage = 3;
+
     /**
      * Display a listing of the resource.
      *
@@ -13,7 +17,14 @@ class ArticleController extends Controller
      */
     public function index()
     {
-        return "liste des articles";
+        $articles = Article::orderByDesc('id')->paginate($this->perPage);
+        // $articles = Article::orderByDesc('id')->simplePaginate($this->perPage);
+        $data = [
+            'title'=>'Liste des articles - '.config('app.name'),
+            'description'=>'Retrouvez ici tous les articles '.config('app.name'),
+            'articles'=>$articles
+        ];
+        return view('article.index', $data);
     }
 
     /**
@@ -40,12 +51,17 @@ class ArticleController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  int  $id
+     * @param  Article->id (par défaut) 
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show(Article $article)
     {
-        return "je suis l'article numéro ".$id;
+        $data = [
+            'title'=>$article->title.' - '.config('app.name'),
+            'description'=>$article->title.'. '.Str::words($article->content, 10),
+            'article'=>$article
+        ];
+        return view('article.show', $data);
     }
 
     /**
@@ -80,5 +96,17 @@ class ArticleController extends Controller
     public function destroy($id)
     {
         // uniquement par l'auteur 
+    }
+
+    /**
+     * Set the value of perPage
+     *
+     * @return  self
+     */ 
+    public function setPerPage($perPage)
+    {
+        $this->perPage = $perPage;
+
+        return $this;
     }
 }
