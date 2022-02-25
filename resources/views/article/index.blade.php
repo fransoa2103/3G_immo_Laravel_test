@@ -8,6 +8,11 @@
     <!-- /.col-lg-3 -->
     <div class="col-lg-9">
         
+        <!-- affiche un message de success lorsqu'un nouvel utilisateur s'inscrit ou se  connecte -->
+        @if(session('success'))
+            <div class="alert alert-success mt-3">{{ session('success') }}</div>
+        @endif
+
         {{-- début du post --}}
         @foreach($articles as $article)
             <div class="card mt-4">
@@ -21,6 +26,18 @@
                         {{ $article->created_at->diffForHumans()}} le 
                         {{ $article->created_at->isoFormat('LL')}}
                     </span>
+
+                    @if(Auth::check() && Auth::user()->id == $article->user_id)
+                        <div class="author mt-3">
+                            <a href="{{ route('articles.edit', ['article'=>$article->slug]) }}" class="btn btn-secondary">Modifier</a>
+                            <form style="display: inline;" action="{{ route('articles.destroy', ['article'=>$article->slug]) }}" method="POST">
+                                @method('DELETE')
+                                @csrf
+                                <button type="submit" class="btn btn-danger">X</button>
+                            </form>
+                        </div>
+                    @endif
+
                 </div>
             </div>
         @endforeach

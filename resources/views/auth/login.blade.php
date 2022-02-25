@@ -28,7 +28,7 @@
         <!-- /.card -->
 
         <div class="card-body">
-            <!-- Formulaire d'inscription -->
+            <!-- Formulaire de connexion -->
             <form action = " {{ route('post.login')}} " method="POST">
                 <div class="mb-3">
                     <label for="email" class="form-label">Email</label>

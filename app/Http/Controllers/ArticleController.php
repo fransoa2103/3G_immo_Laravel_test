@@ -5,7 +5,12 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Auth;
-use App\Models\{Article, Category};
+
+use App\Models\{
+    Article,
+    Category
+};
+
 use App\Http\Requests\ArticleRequest;
 
 class ArticleController extends Controller
@@ -160,6 +165,7 @@ class ArticleController extends Controller
      */
     public function show(Article $article)
     {
+        
         $data = [
             'title'=>$article->title.' - '.config('app.name'),
             'description'=>$article->title.'. '.Str::words($article->content, 10),
@@ -174,9 +180,21 @@ class ArticleController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
+    public function edit(Article $article)
     {
-        // user authentifié et peut éditer l'article via un formulaire
+        // seul un user authentifié peut éditer un article
+        // mais en plus il doit en être le créateur!
+        // donc on vérifie avec abort_if si c'est bien le cas
+        // si ce n'est pas le cas une page erruer 403 est générée
+        abort_if(auth()->id() != $article->user_id, 403);
+
+        $data = [
+            'title'=> $description = 'Mise à jour de '.$article->title,
+            'description'=>$description,
+            'article'=>$article,
+            'categories'=>Category::get()
+        ];
+        return view('article.edit', $data);   
     }
 
     /**
@@ -186,9 +204,20 @@ class ArticleController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(ArticleRequest $request, Article $article)
     {
-        // mise à jour de l'article en database
+        abort_if(auth()->id() != $article->user_id, 403);
+
+        // category_id doit être récupéré car non défini en REQUIRED dans ArticleRequest->rules
+        $validateData = $request->validated();
+        $validateData['category_id'] = request('category', null);
+
+        // Auth::id() renvoie l'id de l'utilisateur connecté qui crée l'article
+        
+        Auth::user()->articles()->updateOrCreate(['id'=>$article->id], $validateData);
+
+        $success = 'Votre article a bien été modifié !';
+        return redirect()->route('articles.edit',['article'=>$article->slug])->withSuccess($success);
     }
 
     /**
@@ -197,9 +226,14 @@ class ArticleController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Article $article)
     {
-        // uniquement par l'auteur 
+        abort_if(auth()->id() != $article->user_id, 403);
+        
+        $article->delete();
+
+        $success = 'Votre article a bien été supprimé !';
+        return back()->withSuccess($success);
     }
 
     /**
