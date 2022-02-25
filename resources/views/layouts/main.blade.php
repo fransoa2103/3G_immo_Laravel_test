@@ -38,7 +38,8 @@
                             <a class="nav-link" href="{{ url('/') }}">Accueil</a>
                         </li>
                         <!-- options du menu si aucun utilisateur n'est connecté -->
-                        <!-- ici le helper 'guest' est appelé si l'utilisateur n'est pas connecté -->
+                        <!-- si le helper 'guest' renvoie true vous n'est qu'un invité et donc non connecté -->
+                        <!-- alors le menu connexion ou register vous est proposé -->
                         @guest
                             <li class="nav-item">
                                 <a class="nav-link" href="{{ route('login') }}">Connexion</a>
@@ -47,8 +48,11 @@
                                 <a class="nav-link" href="{{ route('register') }}">Inscription</a>
                             </li>
                         @endguest
-                        <!-- ici le helper 'auth' est appelé si l'utilisateur est connecté -->
+                        <!-- sinon ici le helper 'auth' renvoie true et donc le menu logout est proposé -->
                         @auth
+                            <li class="nav-item active">
+                                <a class="nav-link" href="{{ route('articles.create') }}">Ajouter un article</a>
+                            </li>
                             <li class="nav-item active">
                                 <a class="nav-link" href="{{ route('logout') }}">Déconnexion</a>
                             </li>

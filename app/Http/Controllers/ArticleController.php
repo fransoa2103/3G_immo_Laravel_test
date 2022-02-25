@@ -4,11 +4,25 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
-use App\Models\Article;
+use Illuminate\Support\Facades\Auth;
+use App\Models\{Article, Category};
+use App\Http\Requests\ArticleRequest;
 
 class ArticleController extends Controller
 {
-    protected $perPage = 3;
+    protected $articlePerPage = 3;
+
+    public function __construct()
+    {
+        /*
+        *   on utilise le middleware 'auth' => App\Http\Middleware\Authenticatye.php,
+        *   pour filtrer l'accès des utilisateurs à la bdd.
+        *   En effet seul un membre connecté pourra créer, modifier ou supprimer un article.
+        *   ici en paramètre, on spécifie avec 'except' que seules les méthodes 'index' et 'show'
+        *   sont accessibles sans que auth = true, cad sans connexion utilisateur.
+        */
+        $this->middleware('auth')->except('index','show');        
+    }
 
     /**
      * Display a listing of the resource.
@@ -17,8 +31,9 @@ class ArticleController extends Controller
      */
     public function index()
     {
-        $articles = Article::orderByDesc('id')->paginate($this->perPage);
-        // $articles = Article::orderByDesc('id')->simplePaginate($this->perPage);
+        $articles = Article::orderByDesc('id')->paginate($this->articlePerPage);
+        // $articles = Article::orderByDesc('id')->simplePaginate($this->articlePerPage);
+
         $data = [
             'title'=>'Liste des articles - '.config('app.name'),
             'description'=>'Retrouvez ici tous les articles '.config('app.name'),
@@ -34,7 +49,14 @@ class ArticleController extends Controller
      */
     public function create()
     {
-        return "formulaire de création";
+        $categories = Category::get();
+        
+        $data = [
+            'title'         => $description = 'Ajouter un nouvel article',
+            'description'   => $description,
+            'categories'    => $categories
+        ];
+        return view('article.create', $data);
     }
 
     /**
@@ -43,10 +65,92 @@ class ArticleController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(ArticleRequest $request)
     {
-        // sauvegarde nouvel article
+        
+        $validateData = $request->validated();
+        
+        // category_id doit être récupéré car non défini en REQUIRED dans ArticleRequest->rules
+        $validateData['category_id'] = request('category', null);
+
+        // Auth::id() renvoie l'id de l'utilisateur connecté qui crée l'article
+        Auth::user()->articles()->create($validateData);
+
+        $success = 'Article ajouté';
+        
+        return back()->withSuccess($success);
     }
+
+    // public function store(Request $request)
+    // {
+        /*
+        // METHODE 1 classique
+        //
+        // ici la méthode classique et basique pour créer un article
+        // le pb est qu'un utilisateur malveillant peut insérer via la consolde de debug js 
+        // des champs supplémentaires et planter le système
+        //
+        request()->validate(
+            [
+                'title'     => ['required', 'max:20', 'unique:articles,title'],
+                'content'   => ['required'],
+                'category'  => ['sometimes', 'nullable', 'exists:categories,id']
+            ],
+            [
+                 // option on peut adapter le vocabulaire de base dans la 2ème partie de tableau
+                 'title.required'   => 'Tu as oublié le titre pfff',
+                 'title.max'        => 'nan trop long ton titre',
+                 'content.required' => 'si c\'est pour mettre un post vide c nul'
+              ]
+        );
+
+        // Après validation on instancie le nouvel article
+        $article = new Article; 
+        // Auth::id() renvoie l'utilisateur connecté  
+        $article->user_id       = Auth::id();
+        $article->category_id   = request('category', null);
+        $article->title         = request('title');
+        $article->slug          = Str::slug($article->title);
+        $article->content       = request('content');
+        $article->save();
+        //
+        */
+
+        /*
+        |
+        | METHODE 2 MASS ASSIGNEMENT et FILLABLE
+        |
+        */
+        
+        // $article = Article::create(
+        //     [
+        //         'user_id'       => auth()->id(),
+        //         'title'         => request('title'),
+        //         'slug'          => Str::slug(request('title')),
+        //         'content'       => request('content'),
+        //         'category_id'   => request('category', null),
+        //     ]
+        // );
+        // $article->save();
+
+        /*
+        |
+        | METHODE 3 MASS ASSIGNEMENT et GUARDED
+        |
+        */
+        // $article = Auth::user()->articles()->create(request()->validate(
+        //     [
+        //         'title'     => ['required', 'max:20', 'unique:articles,title'],
+        //         'content'   => ['required'],
+        //         'category'  => ['sometimes', 'nullable', 'exists:categories,id']
+        //     ]
+        // ));
+        // $article->category_id = request('category', null);
+        // $article->save();
+
+        // $success = 'Article ajouté';
+        // return back()->withSuccess($success);
+    // }
 
     /**
      * Display the specified resource.

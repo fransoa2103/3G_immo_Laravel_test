@@ -7,6 +7,10 @@ use Illuminate\Support\Facades\Auth;
 
 class LoginController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('guest');
+    }
     // formulaire de connexion
     public function index()
     {
@@ -19,7 +23,7 @@ class LoginController extends Controller
         ];
         return view('auth.login', $data);
     }
-    
+       
     public function login()
     {
         request()->validate([
